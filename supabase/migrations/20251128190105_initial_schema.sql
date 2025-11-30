@@ -11,5 +11,46 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXITS profiles (
-    
+    profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(), 
+    user_id UUID FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    bio VARCHAR(160), 
+    avatar_url TEXT,
+    following_count INT DEFAULT 0,
+    follower_count INT DEFAULT 0,
+    post_count INT DEFAULT 0,
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    author_id UUID FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    content VARCHAR(280) NOT NULL,
+    image_url TEXT,
+    category TEXT DEFAULT 'general',
+    likes_count INT DEFAULT 0,
+    comments_count INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    comment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    author_id UUID FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    content VARCHAR(120) NOT NULL,
+    likes_count INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+);
+
+CREATE TABLE IF NOT EXISTS likes (
+    like_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    post_id UUID FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, post_id)
+);
+
+CREATE TABLE IF NOT EXISTS follows (
+    follow_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    follower_id UUID FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
+    following_id UUID FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE,
 );
