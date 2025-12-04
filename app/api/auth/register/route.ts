@@ -7,11 +7,6 @@ const registrationSchema = z.object({
     password: z.string().min(8).max(20),
     first_name: z.string(),
     last_name: z.string(), 
-    user_type: z.string().optional(),
-    is_active: z.boolean().optional(),
-    last_login: z.date().optional(),
-    created_at: z.date().optional()
-
 
 })
 export async function POST(req:Request) {
@@ -22,7 +17,8 @@ export async function POST(req:Request) {
         return new Response(JSON.stringify({ error: "Invalid registration data" }), { status: 400 });
     }
 
-    const { username, email, password, first_name, last_name, user_type, is_active, last_login, created_at  } = parsedBody.data;
+    const { username, email, password, first_name, last_name } = parsedBody.data;
+
 
     const { data: matchdata, error: matcherror } = await supabase
         .from('users')
@@ -43,8 +39,8 @@ export async function POST(req:Request) {
     email: `${email}`,
     password: `${password}`,
     options: {
-      data:{ username },
-      emailRedirectTo: ' http://localhost:3000/page.tsx'
+      data:{ username, first_name, last_name,  },
+      emailRedirectTo: 'http://localhost:3000/auth/callback'
     }
   }
 )
