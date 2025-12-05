@@ -2,57 +2,67 @@ import * as z from "zod";
 import supabase from "@/app/supabaseClient";
 
 const registrationSchema = z.object({
-    username: z.string().min(3).max(30), 
-    email: z.email(), 
-    password: z.string().min(8).max(20),
-    first_name: z.string(),
-    last_name: z.string(), 
+  username: z.string().min(3).max(30),
+  email: z.email(),
+  password: z.string().min(8).max(20),
+  first_name: z.string(),
+  last_name: z.string(),
+});
+export async function POST(req: Request) {
+  const body = await req.json();
+  const parsedBody = registrationSchema.safeParse(body);
 
-})
-export async function POST(req:Request) {
-    const body = await req.json();
-    const parsedBody = registrationSchema.safeParse(body);
+  if (!parsedBody.success) {
+    return new Response(
+      JSON.stringify({ error: "Invalid registration data" }),
+      { status: 400 },
+    );
+  }
 
-    if(!parsedBody.success) {
-        return new Response(JSON.stringify({ error: "Invalid registration data" }), { status: 400 });
-    }
+  const { username, email, password, first_name, last_name } = parsedBody.data;
 
-    const { username, email, password, first_name, last_name } = parsedBody.data;
+  const { data: matchdata, error: matcherror } = await supabase
+    .from("users")
+    .select("id")
+    .or(`username.eq.${username},email.eq.${email}`)
+    .limit(1);
 
+  if (matcherror) {
+    return new Response(
+      JSON.stringify({ error: "Database query error" + matcherror.message }),
+      { status: 500 },
+    );
+  }
 
-    const { data: matchdata, error: matcherror } = await supabase
-        .from('users')
-        .select('id')
-        .or(`username.eq.${username},email.eq.${email}`)
-        .limit(1);
+  if (matchdata && matchdata.length > 0) {
+    return new Response(
+      JSON.stringify({ error: "Username or email already exists" }),
+      { status: 409 },
+    );
+  }
 
-    if (matcherror) {
-        return new Response(JSON.stringify({ error: "Database query error" + matcherror.message }), { status: 500 });
-     }
-    
-    if (matchdata && matchdata.length > 0) {
-        return new Response(JSON.stringify({ error: "Username or email already exists" }), { status: 409 });
-    }
-
-    const { data : signupData, error: signupError } = await supabase.auth.signUp(
-  {
+  const { error: signupError } = await supabase.auth.signUp({
     email: `${email}`,
     password: `${password}`,
     options: {
-      data:{ username, first_name, last_name,  },
-      emailRedirectTo: 'http://localhost:3000/auth/callback'
-    }
+      data: { username, first_name, last_name },
+      emailRedirectTo: "http://localhost:3000/auth/callback",
+    },
+  });
+
+  if (signupError) {
+    return new Response(
+      JSON.stringify({ error: "Signup error: " + signupError.message }),
+      { status: 500 },
+    );
   }
-)
 
-if (signupError) {
-    return new Response(JSON.stringify({ error: "Signup error: " + signupError.message }), { status: 500 });
+  return new Response(
+    JSON.stringify({
+      success: true,
+      message:
+        "Verification email sent. Please confirm your email to activate your account.",
+    }),
+    { status: 200 },
+  );
 }
-
- return new Response(JSON.stringify({ success: true, message: "Verification email sent. Please confirm your email to activate your account." }), { status: 200 });
-}
-
-
-
-
-

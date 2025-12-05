@@ -1,5 +1,3 @@
-import 
+import supabase from "@/app/supabaseClient";
 
-export async function POST(req: Request) {
-    
-}
+export async function POST(req: Request) {}
