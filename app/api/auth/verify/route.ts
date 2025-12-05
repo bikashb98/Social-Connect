@@ -37,19 +37,17 @@ export async function POST(req: Request) {
     const user = userData.user;
     const metadata = user.user_metadata;
 
-    const { error } = await supabase
-      .from("users")
-      .insert({
-        id: user.id,
-        email: user.email,
-        username: metadata.username,
-        first_name: metadata.first_name,
-        last_name: metadata.last_name,
-      });
+    const { error } = await supabase.from("users").insert({
+      id: user.id,
+      email: user.email,
+      username: metadata.username,
+      first_name: metadata.first_name,
+      last_name: metadata.last_name,
+    });
 
     if (error) {
       return new Response(
-        JSON.stringify({ error: "Error inserting usr data:" + error.message }),
+        JSON.stringify({ error: "Error inserting user data:" + error.message }),
         { status: 500 },
       );
     }
