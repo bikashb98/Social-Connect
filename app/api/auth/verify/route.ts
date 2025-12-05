@@ -1,18 +1,48 @@
 import supabase from "@/app/supabaseClient";
 
-export async function GET (req: Request) {
-    const url = new URL(req.url);
-    const access_token = url.searchParams.get('access_token');
-    console.log("Access Token:", access_token);
-    console.log("Request URL:", req.url);
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-    if (!access_token) {
-        return new Response(JSON.stringify({ error: "Access token is missing", }), { status: 400 });
-    }
+const supabaseUrl : string = process.env.SUPABASE_URL || '';
+const supabaseAnonKey : string = process.env.SUPABASE_KEY || '';
 
-    const { data: {user}, error: userError } = await supabase.auth.getUser(access_token);
+export async function POST (req: Request) {
+    
 
-    if (userError || !user) {
-        return new Response(JSON.stringify({ error: "Invalid access token", }), { status: 400 });
+    try {
+        const {accessToken} = await req.json();
+        if (!accessToken) {
+            return new Response (JSON.stringify({error: "Access token is required"}), {status: 400});
+        }
+
+
+
+        const supabaseUser: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+            headers: { Authorization: `Bearer ${accessToken}` }
+     }
+});
+
+
+
+
+
+        const { data: userData, error: userError } = await supabaseUser.auth.getUser(accessToken);
+
+        if (userError || !userData.user) {
+            return new Response (JSON.stringify({error: "Invalid or expired access token"}), {status: 401});
+        }
+        const user = userData.user;
+        const metadata = user.user_metadata;
+
+        const {error} = await supabase.from('users').insert({id:user.id, email:user.email, username: metadata.username, first_name:metadata.first_name, last_name:metadata.last_name })
+
+        if (error) {
+            return new Response (JSON.stringify({error: "Error inserting usr data:" + error.message}), {status: 500});
+        }
+
+        return new Response (JSON.stringify({message: "User verified successfully"}), {status: 200});
+    
+    }catch (error) {
+        return new Response (JSON.stringify({error: "Internal Server Error" + error}), {status: 500});
     }
 }
