@@ -1,4 +1,5 @@
 import supabase from "@/app/supabaseClient";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -10,8 +11,8 @@ export async function POST(req: Request) {
     .limit(1);
 
   if (!userData || userError) {
-    return new Response(
-      JSON.stringify({ message: "User not found" + userError.message }),
+    return NextResponse.json(
+      { message: "User not found" + userError.message },
       { status: 404 },
     );
   }
@@ -20,9 +21,7 @@ export async function POST(req: Request) {
   const password = body.password;
 
   if (!email) {
-    return new Response(JSON.stringify({ message: "Email not found" }), {
-      status: 404,
-    });
+    return NextResponse.json({ message: "Email not found" }, { status: 404 });
   }
 
   const { data: signIndata, error: signInError } =
@@ -31,9 +30,7 @@ export async function POST(req: Request) {
       password: password,
     });
   if (signInError) {
-    return new Response(JSON.stringify({ message: signInError.message }), {
-      status: 401,
-    });
+    return NextResponse.json({ message: signInError.message }, { status: 401 });
   }
 
   const id = signIndata.user?.id;
@@ -44,15 +41,26 @@ export async function POST(req: Request) {
     .eq("id", id);
 
   if (error) {
-    return new Response(JSON.stringify({ message: error.message }), {
-      status: 500,
-    });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 
-  const accessToken = `Bearer ${signIndata.session?.access_token}`;
-  const refreshToken = signIndata.session?.refresh_token;
+  const session = signIndata.session;
 
-  return new Response(JSON.stringify({ accessToken, refreshToken }), {
-    status: 200,
-  });
+  const res = NextResponse.json(
+    { message: "Login successful" },
+    { status: 200 },
+  );
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "development",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  };
+
+  res.cookies.set("access_token", session!.access_token, cookieOptions);
+  res.cookies.set("refresh_token", session!.refresh_token, cookieOptions);
+
+  return res;
 }
