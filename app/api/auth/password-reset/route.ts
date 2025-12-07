@@ -18,10 +18,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  console.log("Email Data:", emailData);
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "http://localhost:3000/auth/password-reset-confirm",
+    redirectTo: "http://localhost:3000/auth/password-reset",
   });
 
   if (error) {
