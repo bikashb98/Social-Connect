@@ -4,15 +4,35 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleLogin = async () => {
-    console.log('Login:', { email, password });
-    // Add your login logic here
+    setError('');
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+    
+    if (response.status === 200) {
+      router.push('/dashboard');
+    } else {
+      setError('Invalid username or password');
+    }
   };
+
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center px-4 pt-20 pb-32">
@@ -53,12 +73,16 @@ export default function LoginPage() {
                   className="h-12 text-base px-4"
                 />
 
+                {error && <div className='w-full text-red-600 text-sm text-center'>{error}</div>}
+
                 <Button
                   onClick={handleLogin}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 text-xl rounded-md"
                 >
                   Log In
                 </Button>
+
+               
 
                 <div className="text-center py-2">
                   <a href="#" className="text-blue-600 hover:underline text-sm">
