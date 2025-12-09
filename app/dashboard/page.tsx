@@ -1,6 +1,6 @@
 'use client';
 
-import { BellIcon } from '@heroicons/react/24/outline';
+import { BellIcon} from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

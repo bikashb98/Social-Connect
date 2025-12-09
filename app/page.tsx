@@ -1,5 +1,6 @@
 'use client';
 
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -42,13 +44,13 @@ export default function LoginPage() {
           {/* Left Side - Logo and Tagline */}
           <div className="flex flex-col md:pr-8">
             <Image 
-              src="/assets/logos/logo.png" 
+              src="/assets/logos/logo1.png" 
               alt="social-connect logo" 
               width={500} 
               height={166}
-              className="-mb-4 w-full max-w-md"
+              className="w-full max-w-md"
             />
-            <p className="text-2xl md:text-3xl text-gray-800 leading-snug md:pl-2">
+            <p className="text-2xl md:text-3xl text-slate-700 leading-snug font-normal">
               Connect with friends and the world around you on social-connect.
             </p>
           </div>
@@ -65,13 +67,26 @@ export default function LoginPage() {
                   className="h-12 text-base px-4"
                 />
                 
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 text-base px-4"
-                />
+               <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-12 text-base px-4 pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                     {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                    </button>
+                    </div>
 
                 {error && <div className='w-full text-red-600 text-sm text-center'>{error}</div>}
 
@@ -94,6 +109,7 @@ export default function LoginPage() {
 
                 <div className="text-center pt-2 pb-4">
                   <Button
+                    onClick = {() => router.push('/register')}
                     className="bg-green-500 hover:bg-green-600 text-white font-bold px-10 h-12 text-lg rounded-md"
                   >
                     Create new account

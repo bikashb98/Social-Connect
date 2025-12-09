@@ -56,7 +56,7 @@ export default function RegisterPage() {
           {/* Left Side - Logo and Tagline */}
           <div className="flex flex-col md:pr-8">
             <Image 
-              src="/assets/logos/logo.png" 
+              src="/assets/logos/logo1.png" 
               alt="social-connect logo" 
               width={500} 
               height={166}
