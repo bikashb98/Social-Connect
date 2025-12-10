@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: "http://localhost:3000/auth/password-reset",
   });
