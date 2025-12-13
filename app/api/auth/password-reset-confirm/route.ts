@@ -1,11 +1,34 @@
 import { NextResponse, NextRequest } from "next/server";
-import supabase from "@/app/supabaseClient";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
-  console.log("Password Reset Confirm Request Received");
   const body = await req.json();
 
-  console.log("Request body:", body);
+  const { access_token, new_password } = body;
 
-  return NextResponse.json({ message: "All good" }, { status: 200 });
+  if (!access_token || !new_password) {
+    return NextResponse.json ({ error: "Access token and new password are required" }, { status: 400 });
+  }
+
+
+  const supabaseUrl: string = process.env.SUPABASE_URL || "";
+  const supabaseAnonKey: string = process.env.SUPABASE_KEY || "";
+
+  const supabaseUser: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, 
+    {global: {
+      headers: { Authorization: `Bearer ${access_token}` },
+    } }
+  );
+
+  const {error} = await supabaseUser.auth.updateUser({
+    password: new_password,
+  });
+
+  if (error) {
+    return NextResponse.json({ error: "Password reset failed: " + error.message }, { status: 500 });
+  }
+
+
+
+  return NextResponse.json({ message: "Password reset successful" }, { status: 200 });
 }

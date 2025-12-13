@@ -99,9 +99,12 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="text-center py-2">
-                  <a href="#" className="text-blue-600 hover:underline text-sm">
+                  <button 
+                    onClick={() => router.push('/login/identify')}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
                     Forgot password?
-                  </a>
+                  </button>
                 </div>
 
                 <hr className="my-3" />

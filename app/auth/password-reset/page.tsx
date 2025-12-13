@@ -67,7 +67,7 @@ export default function AuthPasswordReset() {
       setSuccess("Password reset successful! Redirecting to login...");
       setTimeout(() => {
         router.push("/");
-      }, 2000);
+      }, 1000);
     } else {
       setError(data.error || "Password reset failed. Please try again.");
     }
@@ -80,7 +80,7 @@ export default function AuthPasswordReset() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-16">
             <Image
-              src="/assets/logos/logo.png"
+              src="/assets/logos/logo1.png"
               alt="social-connect logo"
               width={150}
               height={50}

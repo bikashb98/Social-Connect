@@ -8,6 +8,7 @@ const registrationSchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
 });
+
 export async function POST(req: Request) {
   const body = await req.json();
   const parsedBody = registrationSchema.safeParse(body);
