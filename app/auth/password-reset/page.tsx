@@ -16,20 +16,24 @@ export default function AuthPasswordReset() {
 
   // Extract access token from URL hash
   const getAccessToken = () => {
-    if (typeof window === "undefined") return "";
+    if (typeof window === "undefined") return { access_token: "", refresh_token: "" };
+    
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
-    return params.get("access_token") || "";
+    const access_token =  params.get("access_token") || "";
+    const refresh_token = params.get("refresh_token") || "";
+    
+    return { access_token, refresh_token };
   };
 
   const handleResetPassword = async () => {
     setError("");
     setSuccess("");
 
-    const accessToken = getAccessToken();
+    const { access_token, refresh_token } = getAccessToken();
 
     // Validation
-    if (!accessToken) {
+    if (!access_token) {
       setError("No access token found. Please use the link from your email.");
       return;
     }
@@ -56,7 +60,8 @@ export default function AuthPasswordReset() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        access_token: accessToken,
+        access_token: access_token,
+        refresh_token: refresh_token,
         new_password: newPassword,
       }),
     });

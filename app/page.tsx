@@ -99,8 +99,8 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="text-center py-2">
-                  <button 
-                    onClick={() => router.push('/login/identify')}
+                  <button
+                    onClick={() => router.push("/login/identify")}
                     className="text-blue-600 hover:underline text-sm"
                   >
                     Forgot password?

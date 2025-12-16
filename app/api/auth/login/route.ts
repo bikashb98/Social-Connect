@@ -44,6 +44,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 
+  console.log ('Login data check' , signIndata);
+
   const session = signIndata.session;
 
   const res = NextResponse.json(
