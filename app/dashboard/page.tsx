@@ -4,7 +4,7 @@ import { BellIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { removeCookie } from "../actions/cookie";
+
 
 
 
@@ -12,11 +12,17 @@ export default function DashboardPage() {
   const router = useRouter();
   const notifications = 3;
 
+
   
 
   const handleLogout = async () => {
-    const logout = await removeCookie();
-    if (logout.message === true) {
+  
+
+    const response = await fetch ("/api/auth/logout", {
+      method: "POST"
+    })
+
+    if (response.status === 200) {
       router.push("/");
     }
   };
