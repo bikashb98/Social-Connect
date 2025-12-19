@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     secure: process.env.NODE_ENV === "development",
     sameSite: "lax" as const,
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60,
   };
 
   res.cookies.set("access_token", session!.access_token, cookieOptions);

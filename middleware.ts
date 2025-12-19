@@ -16,9 +16,11 @@ export async function middleware(request: NextRequest) {
     error,
   } = (await supabase.auth.getUser(accessToken?.value)) || " ";
 
+
   if (error || !user) {
     return NextResponse.redirect(new URL("/", request.url));
   }
+
 
 }
 
