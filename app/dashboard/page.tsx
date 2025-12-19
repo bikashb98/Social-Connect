@@ -5,23 +5,14 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { removeCookie } from "../actions/cookie";
-import { useEffect } from "react";
 
-import { accessTokenCheck } from "../actions/feedauthcheck";
+
 
 export default function DashboardPage() {
   const router = useRouter();
   const notifications = 3;
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const result = await accessTokenCheck();
-      if (!result.authenticated) {
-        router.push("/");
-      }
-    };
-    checkAuth();
-  }, [router]);
+  
 
   const handleLogout = async () => {
     const logout = await removeCookie();
