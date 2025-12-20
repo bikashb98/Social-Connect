@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 
-  console.log ('Login data check' , signIndata);
+  console.log("Login data check", signIndata);
 
   const session = signIndata.session;
 
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     secure: process.env.NODE_ENV === "development",
     sameSite: "lax" as const,
     path: "/",
-    maxAge: 60 * 60,
+    maxAge: 60 * 60 * 24 * 7,
   };
 
   res.cookies.set("access_token", session!.access_token, cookieOptions);

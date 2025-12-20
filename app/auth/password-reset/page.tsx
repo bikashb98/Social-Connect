@@ -16,13 +16,14 @@ export default function AuthPasswordReset() {
 
   // Extract access token from URL hash
   const getAccessToken = () => {
-    if (typeof window === "undefined") return { access_token: "", refresh_token: "" };
-    
+    if (typeof window === "undefined")
+      return { access_token: "", refresh_token: "" };
+
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
-    const access_token =  params.get("access_token") || "";
+    const access_token = params.get("access_token") || "";
     const refresh_token = params.get("refresh_token") || "";
-    
+
     return { access_token, refresh_token };
   };
 
