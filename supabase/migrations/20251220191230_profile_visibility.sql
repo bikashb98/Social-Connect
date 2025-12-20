@@ -1,0 +1,2 @@
+ALTER TABLE profiles
+ADD COLUMN visibility VARCHAR(20) DEFAULT 'public' NOT NULL;
