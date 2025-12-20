@@ -52,6 +52,17 @@ export async function POST(req: Request) {
       );
     }
 
+    const {error: profileError} = await supabase.from("profiles").insert({
+      user_id: user.id,
+    });
+
+    if (profileError) {
+      return new Response(
+        JSON.stringify({ error: "Error creating profile:" + profileError.message }),
+        { status: 500 },
+      );
+    }
+
     return new Response(
       JSON.stringify({ message: "User verified successfully" }),
       { status: 200 },
