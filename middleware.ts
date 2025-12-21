@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
       });
     }
   } catch (error) {
-    console.error ('Error decoding JWT:', error);
+    console.error("Error decoding JWT:", error);
     return NextResponse.redirect(new URL("/", request.url));
   }
 
